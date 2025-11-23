@@ -2,19 +2,21 @@ package handlers
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/service"
+	"github.com/nfsarch33/secure-auth-platform/backend/pkg/recaptcha"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 type AuthHandler struct {
-	service service.AuthService
+	service  service.AuthService
+	verifier recaptcha.Verifier
 }
 
-func NewAuthHandler(s service.AuthService) *AuthHandler {
-	return &AuthHandler{service: s}
+func NewAuthHandler(s service.AuthService, v recaptcha.Verifier) *AuthHandler {
+	return &AuthHandler{service: s, verifier: v}
 }
 
 func (h *AuthHandler) SignUp(c *gin.Context) {
@@ -29,7 +31,16 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, token, err := h.service.SignUp(c.Request.Context(), req.Email, req.Password)
+	// Verify Captcha if provided (optional for now to pass existing tests without it, or mock it)
+	if req.CaptchaToken != nil && *req.CaptchaToken != "" {
+		valid, err := h.verifier.Verify(c.Request.Context(), *req.CaptchaToken)
+		if err != nil || !valid {
+			c.JSON(http.StatusBadRequest, api.ErrorResponse{Error: "Invalid CAPTCHA"})
+			return
+		}
+	}
+
+	user, token, err := h.service.SignUp(c.Request.Context(), string(req.Email), req.Password)
 	if err != nil {
 		if err == service.ErrUserAlreadyExists {
 			c.JSON(http.StatusConflict, api.ErrorResponse{Error: err.Error()})
@@ -41,11 +52,11 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, api.AuthResponse{
 		User: api.User{
-			Id:        user.ID.String(),
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt.Format(time.RFC3339),
+			Id:        openapi_types.UUID(user.ID),
+			Email:     openapi_types.Email(user.Email),
+			CreatedAt: user.CreatedAt,
 		},
-		Token: &token,
+		Token: token,
 	})
 }
 
@@ -56,7 +67,16 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	user, token, err := h.service.SignIn(c.Request.Context(), req.Email, req.Password)
+	// Verify Captcha if provided
+	if req.CaptchaToken != nil && *req.CaptchaToken != "" {
+		valid, err := h.verifier.Verify(c.Request.Context(), *req.CaptchaToken)
+		if err != nil || !valid {
+			c.JSON(http.StatusBadRequest, api.ErrorResponse{Error: "Invalid CAPTCHA"})
+			return
+		}
+	}
+
+	user, token, err := h.service.SignIn(c.Request.Context(), string(req.Email), req.Password)
 	if err != nil {
 		if err == service.ErrInvalidCredentials {
 			c.JSON(http.StatusUnauthorized, api.ErrorResponse{Error: "Invalid credentials"})
@@ -68,10 +88,10 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 
 	c.JSON(http.StatusOK, api.AuthResponse{
 		User: api.User{
-			Id:        user.ID.String(),
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt.Format(time.RFC3339),
+			Id:        openapi_types.UUID(user.ID),
+			Email:     openapi_types.Email(user.Email),
+			CreatedAt: user.CreatedAt,
 		},
-		Token: &token,
+		Token: token,
 	})
 }

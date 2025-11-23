@@ -1,4 +1,4 @@
-.PHONY: dev test lint build gen-api install clean test-backend lint-backend test-frontend lint-frontend test-e2e test-e2e-docker
+.PHONY: dev test lint build gen-api install clean test-backend lint-backend test-frontend lint-frontend test-e2e test-e2e-docker security test-all
 
 install:
 	cd backend && go mod download && go install github.com/onsi/ginkgo/v2/ginkgo@v2.13.0 && go install go.uber.org/mock/mockgen@latest && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -22,8 +22,8 @@ test-e2e:
 
 test-e2e-docker:
 	@echo "Running Playwright E2E Tests in Docker..."
-	# Ensure stack is up
-	docker-compose up -d
+	# Ensure stack is up with RECAPTCHA disabled for tests
+	RECAPTCHA_DISABLED=true docker-compose up -d
 	# Run Playwright
 	docker run --rm --init --network secure-auth-platform_auth-net \
 		-v "$(PWD)/frontend:/app" \
@@ -47,8 +47,15 @@ build:
 	docker build -t auth-frontend:latest ./frontend
 
 gen-api:
-	cd backend && go run github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -package api -generate types,server api/openapi.yaml > internal/api/types.go
+	cd backend && go run github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen -package api -generate types api/openapi.yaml > internal/api/types.go
+	# Using docker to avoid local shell issues for frontend generation if needed, but keeping npm run for now as it works in CI/Docker
 	cd frontend && npm run generate-api
 
 clean:
 	docker-compose down -v
+
+security:
+	@echo "Running Gosec..."
+	docker run --rm -v "$(PWD)/backend:/app" -w /app securego/gosec:latest ./...
+
+test-all: test-backend test-frontend test-e2e-docker security

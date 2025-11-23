@@ -2,12 +2,14 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { SignUpForm } from './components/SignUpForm';
 import { SignInForm } from './components/SignInForm';
+import { CaptchaProvider } from './components/CaptchaProvider';
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <main>
-        <nav>
+    <CaptchaProvider>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <main>
+          <nav>
           <ul>
             <li>
               <Link to="/signup" style={{ color: '#000000', textDecoration: 'underline' }}>Sign Up</Link>
@@ -25,6 +27,7 @@ const App: React.FC = () => {
         </Routes>
       </main>
     </BrowserRouter>
+    </CaptchaProvider>
   );
 };
 

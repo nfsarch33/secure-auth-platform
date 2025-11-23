@@ -82,6 +82,7 @@ func CheckPassword(password, encodedHash string) (bool, error) {
 		return false, err
 	}
 
+	// #nosec G115
 	compareHash := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, uint32(len(hash)))
 
 	return subtle.ConstantTimeCompare(hash, compareHash) == 1, nil

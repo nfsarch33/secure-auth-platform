@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { DefaultService as AuthService } from '../api';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const signUpSchema = z.object({
   email: z.string().email('Email is required'),
@@ -21,11 +22,19 @@ export const SignUpForm: React.FC = () => {
     resolver: zodResolver(signUpSchema),
   });
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const onSubmit = async (data: SignUpFormData) => {
     try {
+      let captchaToken = '';
+      if (executeRecaptcha) {
+        captchaToken = await executeRecaptcha('signup');
+      }
+
       await AuthService.signUp({
         email: data.email,
         password: data.password,
+        captchaToken: captchaToken,
       });
       setMessage('Sign up successful! Please sign in.');
     } catch (error: any) {

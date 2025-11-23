@@ -42,6 +42,8 @@ components:
         password:
           type: string
           minLength: 8
+        captchaToken:
+          type: string
       required:
         - email
         - password
@@ -53,6 +55,8 @@ components:
           type: string
           format: email
         password:
+          type: string
+        captchaToken:
           type: string
       required:
         - email

@@ -22,9 +22,18 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
+// Mock react-google-recaptcha-v3
+const mockExecuteRecaptcha = vi.fn();
+vi.mock('react-google-recaptcha-v3', () => ({
+  useGoogleReCaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha,
+  }),
+}));
+
 describe('SignUpForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExecuteRecaptcha.mockResolvedValue('mock-captcha-token');
   });
 
   it('renders sign up form elements', () => {
@@ -73,6 +82,7 @@ describe('SignUpForm', () => {
       expect(mockSignup).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'Password123!',
+        captchaToken: 'mock-captcha-token',
       });
       // The component currently sets a message, it doesn't automatically navigate or login in the current implementation shown in read_file
       // But let's check if success message appears

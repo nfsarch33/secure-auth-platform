@@ -22,9 +22,18 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
+// Mock react-google-recaptcha-v3
+const mockExecuteRecaptcha = vi.fn();
+vi.mock('react-google-recaptcha-v3', () => ({
+  useGoogleReCaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha,
+  }),
+}));
+
 describe('SignInForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExecuteRecaptcha.mockResolvedValue('mock-captcha-token');
   });
 
   it('renders sign in form elements', () => {
@@ -73,6 +82,7 @@ describe('SignInForm', () => {
       expect(mockSignin).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'Password123!',
+        captchaToken: 'mock-captcha-token',
       });
       expect(screen.getByText(/Sign in successful!/i)).toBeInTheDocument();
     });
