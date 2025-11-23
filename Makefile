@@ -31,7 +31,7 @@ test-e2e-docker:
 		-e BASE_URL=http://frontend \
 		-e BACKEND_URL=http://backend:8080 \
 		-e CI=true \
-		mcr.microsoft.com/playwright:v1.48.2-jammy \
+		mcr.microsoft.com/playwright:v1.56.1-jammy \
 		/bin/bash -c "npm ci && npx playwright test"
 
 lint: lint-backend lint-frontend
