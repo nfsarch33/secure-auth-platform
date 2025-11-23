@@ -13,28 +13,38 @@ import (
 )
 
 var (
-	ErrUserAlreadyExists = errors.New("user already exists")
+	ErrUserAlreadyExists  = errors.New("user already exists")
 	ErrInvalidCredentials = errors.New("invalid credentials")
 )
 
-type AuthService struct {
+// AuthService defines the interface for authentication logic
+//
+//go:generate mockgen -destination=../mocks/service/auth_service.go -package=mocks github.com/nfsarch33/secure-auth-platform/backend/internal/service AuthService
+type AuthService interface {
+	SignUp(ctx context.Context, email, plainPassword string) (*models.User, error)
+	SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error)
+}
+
+type AuthServiceImpl struct {
 	repo         repository.UserRepository
 	tokenService *jwt.TokenService
 }
 
-func NewAuthService(repo repository.UserRepository, tokenService *jwt.TokenService) *AuthService {
-	return &AuthService{
+// Ensure AuthServiceImpl implements AuthService
+var _ AuthService = &AuthServiceImpl{}
+
+func NewAuthService(repo repository.UserRepository, tokenService *jwt.TokenService) *AuthServiceImpl {
+	return &AuthServiceImpl{
 		repo:         repo,
 		tokenService: tokenService,
 	}
 }
 
-func (s *AuthService) SignUp(ctx context.Context, email, plainPassword string) (*models.User, error) {
+func (s *AuthServiceImpl) SignUp(ctx context.Context, email, plainPassword string) (*models.User, error) {
 	// Check if user exists
 	existingUser, err := s.repo.GetByEmail(ctx, email)
 	if err != nil {
 		// Assuming nil, nil is returned if not found, otherwise it's a DB error
-		// Ideally we handle errors better, but for now proceed if user found
 	}
 	if existingUser != nil {
 		return nil, ErrUserAlreadyExists
@@ -60,10 +70,10 @@ func (s *AuthService) SignUp(ctx context.Context, email, plainPassword string) (
 	return user, nil
 }
 
-func (s *AuthService) SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error) {
+func (s *AuthServiceImpl) SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error) {
 	user, err := s.repo.GetByEmail(ctx, email)
 	if err != nil {
-		return nil, "", err // Or wrap error
+		return nil, "", err
 	}
 	if user == nil {
 		return nil, "", ErrInvalidCredentials
