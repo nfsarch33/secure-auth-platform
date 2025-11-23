@@ -1,4 +1,4 @@
-.PHONY: dev test lint build gen-api install clean test-backend lint-backend test-frontend lint-frontend
+.PHONY: dev test lint build gen-api install clean test-backend lint-backend test-frontend lint-frontend test-e2e test-e2e-docker
 
 install:
 	cd backend && go mod download && go install github.com/onsi/ginkgo/v2/ginkgo@v2.13.0 && go install go.uber.org/mock/mockgen@latest && go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
@@ -7,13 +7,32 @@ install:
 dev:
 	docker-compose up --build
 
-test: test-backend test-frontend
+test: test-backend test-frontend test-e2e-docker
 
 test-backend:
-	cd backend && ginkgo -r -v --cover ./...
+	@echo "Running Backend Unit & DB Tests..."
+	docker run --rm -v "$(PWD)/backend:/app" -w /app golang:1.23-alpine sh -c "apk add --no-cache git && go mod tidy && go install github.com/onsi/ginkgo/v2/ginkgo@v2.13.0 && ginkgo -r -v --cover ./..."
 
 test-frontend:
-	cd frontend && npm test
+	@echo "Running Frontend Unit Tests..."
+	docker run --rm -v "$(PWD)/frontend:/app" -w /app node:20-alpine sh -c "npm install && CI=true npm test"
+
+test-e2e:
+	cd frontend && npm run test:e2e
+
+test-e2e-docker:
+	@echo "Running Playwright E2E Tests in Docker..."
+	# Ensure stack is up
+	docker-compose up -d
+	# Run Playwright
+	docker run --rm --network secure-auth-platform_auth-net \
+		-v "$(PWD)/frontend:/app" \
+		-w /app \
+		-e BASE_URL=http://frontend \
+		-e BACKEND_URL=http://backend:8080 \
+		-e CI=true \
+		mcr.microsoft.com/playwright:v1.48.2-jammy \
+		/bin/bash -c "npm ci && npx playwright test"
 
 lint: lint-backend lint-frontend
 
