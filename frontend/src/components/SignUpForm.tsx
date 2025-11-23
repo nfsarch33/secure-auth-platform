@@ -37,8 +37,8 @@ export const SignUpForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Sign Up</h2>
+    <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="signup-heading">
+      <h1 id="signup-heading">Sign Up</h1>
       {message && <div role="alert" aria-live="assertive">{message}</div>}
       <div>
         <label htmlFor="email">Email</label>

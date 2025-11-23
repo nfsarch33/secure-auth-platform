@@ -38,8 +38,8 @@ export const SignInForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h2>Sign In</h2>
+    <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="signin-heading">
+      <h1 id="signin-heading">Sign In</h1>
       {message && <div role="status">{message}</div>}
       <div>
         <label htmlFor="email">Email</label>

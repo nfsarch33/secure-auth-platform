@@ -6,14 +6,14 @@ import { SignInForm } from './components/SignInForm';
 const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <div>
+      <main>
         <nav>
           <ul>
             <li>
-              <Link to="/signup">Sign Up</Link>
+              <Link to="/signup" style={{ color: '#000000', textDecoration: 'underline' }}>Sign Up</Link>
             </li>
             <li>
-              <Link to="/signin">Sign In</Link>
+              <Link to="/signin" style={{ color: '#000000', textDecoration: 'underline' }}>Sign In</Link>
             </li>
           </ul>
         </nav>
@@ -23,7 +23,7 @@ const App: React.FC = () => {
           <Route path="/signin" element={<SignInForm />} />
           <Route path="/" element={<h1>Welcome to Secure Auth Platform</h1>} />
         </Routes>
-      </div>
+      </main>
     </BrowserRouter>
   );
 };
