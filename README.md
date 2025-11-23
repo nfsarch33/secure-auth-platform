@@ -23,6 +23,35 @@ Full-stack authentication application built with modern technologies for the Rak
 - Makefile automation
 - GitHub Actions CI/CD
 
+## Architecture
+
+```mermaid
+graph TD
+    subgraph "Frontend (React SPA)"
+        A[SignUp/SignIn Forms] -->|Axios + Zod| B[API Client]
+        B -->|OpenAPI Types| C[Authentication Flow]
+    end
+
+    subgraph "Backend (Go/Gin)"
+        D[HTTP Handlers] -->|Validates Input| E[Service Layer]
+        E -->|Argon2id Hashing| E
+        E -->|JWT Generation| E
+        E -->|Data Access| F[Repository Layer]
+    end
+
+    subgraph "Infrastructure"
+        G[PostgreSQL DB]
+        H[Docker/K8s]
+    end
+
+    C -->|HTTP/JSON| D
+    F -->|SQL| G
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style G fill:#dfd,stroke:#333,stroke-width:2px
+```
+
 ## Quick Start
 
 ```bash
@@ -62,4 +91,3 @@ November 2025
 ## License
 
 MIT
-

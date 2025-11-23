@@ -52,24 +52,24 @@ CREATE INDEX idx_users_email ON users(email);
 
 1. **Rate Limiting**: Implemented basic in-memory rate limiting (per IP) using `golang.org/x/time/rate`.
    - **Production Fix**: Move to Redis-based rate limiting for distributed scaling.
-2. **No Input Sanitization**: XSS vulnerabilities potential.
-   - **Fix**: Use `bluemonday` for HTML sanitization, strict validation.
-3. **JWT Token Storage**: Stored in localStorage (XSS risk).
+2. **reCAPTCHA Integration**: reCAPTCHA v3 implemented to score user interactions.
+   - **Mitigation**: Backend verification of scores to block bots.
+3. **Input Sanitization**: Basic validation provided by Zod (frontend) and struct tags/handlers (backend).
+   - **Fix**: Add `bluemonday` for rigorous HTML sanitization.
+4. **JWT Token Storage**: Stored in localStorage (XSS risk).
    - **Fix**: Use httpOnly cookies with SameSite=Strict.
-4. **No Refresh Tokens**: Long-lived access tokens.
+5. **No Refresh Tokens**: Long-lived access tokens.
    - **Fix**: Implement refresh token rotation pattern.
-5. **Database Connection Pooling**: Implemented using `pgxpool`.
+6. **Database Connection Pooling**: Implemented using `pgxpool`.
    - **Production Fix**: Tune max connections based on load testing.
-6. **Secure Headers**: Implemented basic security headers (HSTS, CSP, etc.) via middleware.
+7. **Secure Headers**: Implemented basic security headers (HSTS, CSP, etc.) via middleware.
    - **Fix**: Fine-tune CSP policy for production assets.
-7. **No HTTPS in Production**: Traffic not encrypted locally.
+8. **No HTTPS in Production**: Traffic not encrypted locally.
    - **Fix**: Deploy with TLS certificates (Let's Encrypt), force HTTPS redirect via Ingress.
-8. **No Observability**: Hard to debug production issues.
-   - **Fix**: Add structured logging (zap/zerolog), metrics (Prometheus), tracing (Jaeger).
-9. **Single Database**: No high availability.
-   - **Fix**: PostgreSQL replication (primary-replica), read-write splitting.
-10. **Password Reset Not Implemented**: Users locked out if forgotten.
-    - **Fix**: Add email-based password reset flow.
+9. **Observability**: Basic structured logging (`log/slog`).
+   - **Fix**: Integrate with ELK/Datadog, add OpenTelemetry tracing.
+10. **Single Database**: No high availability.
+    - **Fix**: PostgreSQL replication (primary-replica), read-write splitting.
 
 ## 3. Future Improvements (More Time)
 
