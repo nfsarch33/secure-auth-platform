@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api/handlers"
+	"github.com/nfsarch33/secure-auth-platform/backend/internal/api/middleware"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/repository/postgres"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/service"
 	"github.com/nfsarch33/secure-auth-platform/backend/pkg/jwt"
@@ -57,6 +58,10 @@ func main() {
 	config.AllowAllOrigins = true // In production, replace with specific origins
 	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
 	r.Use(cors.New(config))
+
+	// Security Middlewares
+	r.Use(middleware.SecureHeadersMiddleware())
+	r.Use(middleware.RateLimitMiddleware(60)) // 60 requests per minute
 
 	// Routes
 	authGroup := r.Group("/auth")

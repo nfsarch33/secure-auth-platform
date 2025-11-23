@@ -48,27 +48,28 @@ CREATE INDEX idx_users_email ON users(email);
 
 ## 2. Potential Weaknesses & Production Improvements
 
-**Current Weaknesses**:
-1. **No Rate Limiting**: Vulnerable to brute-force attacks
-   - **Fix**: Implement rate limiting middleware (e.g., `go-rate-limiter`, Redis-based)
-2. **No Input Sanitization**: XSS vulnerabilities
-   - **Fix**: Use `bluemonday` for HTML sanitization, strict validation
-3. **JWT Token Storage**: Stored in localStorage (XSS risk)
-   - **Fix**: Use httpOnly cookies with SameSite=Strict
-4. **No Refresh Tokens**: Long-lived access tokens
-   - **Fix**: Implement refresh token rotation pattern
-5. **No Database Connection Pooling**: May exhaust connections under load
-   - **Fix**: Use `pgxpool` with max connections configured
-6. **No HTTPS in Production**: Traffic not encrypted
-   - **Fix**: Deploy with TLS certificates (Let's Encrypt), force HTTPS redirect
-7. **No Observability**: Hard to debug production issues
-   - **Fix**: Add structured logging (zap/zerolog), metrics (Prometheus), tracing (Jaeger)
-8. **Single Database**: No high availability
-   - **Fix**: PostgreSQL replication (primary-replica), read-write splitting
-9. **No CSRF Protection**: If using cookies
-   - **Fix**: Implement CSRF tokens for cookie-based auth
-10. **Password Reset Not Implemented**: Users locked out if forgotten
-    - **Fix**: Add email-based password reset flow
+**Current Weaknesses & Mitigations**:
+
+1. **Rate Limiting**: Implemented basic in-memory rate limiting (per IP) using `golang.org/x/time/rate`.
+   - **Production Fix**: Move to Redis-based rate limiting for distributed scaling.
+2. **No Input Sanitization**: XSS vulnerabilities potential.
+   - **Fix**: Use `bluemonday` for HTML sanitization, strict validation.
+3. **JWT Token Storage**: Stored in localStorage (XSS risk).
+   - **Fix**: Use httpOnly cookies with SameSite=Strict.
+4. **No Refresh Tokens**: Long-lived access tokens.
+   - **Fix**: Implement refresh token rotation pattern.
+5. **Database Connection Pooling**: Implemented using `pgxpool`.
+   - **Production Fix**: Tune max connections based on load testing.
+6. **Secure Headers**: Implemented basic security headers (HSTS, CSP, etc.) via middleware.
+   - **Fix**: Fine-tune CSP policy for production assets.
+7. **No HTTPS in Production**: Traffic not encrypted locally.
+   - **Fix**: Deploy with TLS certificates (Let's Encrypt), force HTTPS redirect via Ingress.
+8. **No Observability**: Hard to debug production issues.
+   - **Fix**: Add structured logging (zap/zerolog), metrics (Prometheus), tracing (Jaeger).
+9. **Single Database**: No high availability.
+   - **Fix**: PostgreSQL replication (primary-replica), read-write splitting.
+10. **Password Reset Not Implemented**: Users locked out if forgotten.
+    - **Fix**: Add email-based password reset flow.
 
 ## 3. Future Improvements (More Time)
 
