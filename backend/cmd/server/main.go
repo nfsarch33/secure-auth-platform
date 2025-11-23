@@ -62,7 +62,8 @@ func run() error {
 
 	recaptchaSecret := os.Getenv("RECAPTCHA_SECRET_KEY")
 	if recaptchaSecret == "" {
-		recaptchaSecret = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" // Google test secret
+		slog.Warn("RECAPTCHA_SECRET_KEY is not set, using dummy value for development")
+		recaptchaSecret = "dummy-secret"
 	}
 	recaptchaDisabled := os.Getenv("RECAPTCHA_DISABLED") == "true"
 	recaptchaVerifier := recaptcha.NewVerifier(recaptchaSecret, recaptchaDisabled)
