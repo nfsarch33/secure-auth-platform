@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-11-23
+
+### Added
+- **E2E Testing**: Added Playwright tests for authentication flow and security regression.
+- **Security**: Implemented Rate Limiting middleware (60 req/min).
+- **Security**: Implemented Secure Headers middleware (HSTS, CSP, X-Frame-Options, etc.).
+- **CI/CD**: Added GitHub Actions workflows for CI (test/lint) and Release (build/push/tag).
+
+### Fixed
+- **Testing**: Fixed frontend unit tests hanging in CI environment by adding `CI=true`.
+- **DevOps**: Resolved issue where backend Docker container was running stale code by forcing rebuild.
+
 ## [1.0.0] - 2025-11-23
 
 ### Added
@@ -36,4 +48,3 @@ All notable changes to this project will be documented in this file.
 - Fixed `document is not defined` error in frontend tests by using `jsdom`.
 - Fixed Docker build issues for frontend (API client generation, missing CSS).
 - Fixed backend test flakiness (time matching in SQL mocks).
-
