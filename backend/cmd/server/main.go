@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	_ "github.com/nfsarch33/secure-auth-platform/backend/docs" // Swagger docs
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api/handlers"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api/middleware"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/repository/postgres"
@@ -17,7 +18,6 @@ import (
 	"github.com/nfsarch33/secure-auth-platform/backend/pkg/recaptcha"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/nfsarch33/secure-auth-platform/backend/docs" // Swagger docs
 )
 
 // @title Rakuten Symphony Auth API
@@ -29,20 +29,25 @@ import (
 // @in header
 // @name Authorization
 func main() {
+	if err := run(); err != nil {
+		slog.Error("Application exited with error", "error", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	if err := godotenv.Load(); err != nil {
 		slog.Warn("Error loading .env file, using system environment")
 	}
 
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		slog.Error("DATABASE_URL is required")
-		os.Exit(1)
+		return os.ErrInvalid // Or a custom error
 	}
 
 	pool, err := pgxpool.New(context.Background(), dbURL)
 	if err != nil {
-		slog.Error("Unable to connect to database", "error", err)
-		os.Exit(1)
+		return err
 	}
 	defer pool.Close()
 
@@ -81,7 +86,7 @@ func main() {
 	}
 
 	if err := r.Run(":8080"); err != nil {
-		slog.Error("Server failed to start", "error", err)
-		os.Exit(1)
+		return err
 	}
+	return nil
 }

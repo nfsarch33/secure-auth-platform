@@ -35,4 +35,3 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 func (r *PostgresUserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
 	return nil, nil
 }
-

@@ -37,12 +37,17 @@ export const SignUpForm: React.FC = () => {
         captchaToken: captchaToken,
       });
       setMessage('Sign up successful! Please sign in.');
-    } catch (error: any) {
-      console.error('SignUp Error:', error);
-      // Display detailed error for debugging
-      const errorMsg = error.body ? JSON.stringify(error.body) : error.message || 'Unknown error';
-      setMessage(`Sign up failed: ${errorMsg}`);
-    }
+        } catch (error: unknown) {
+          console.error('SignUp Error:', error);
+          // Display detailed error for debugging
+          let errorMsg = 'Unknown error';
+          if (error instanceof Error) {
+             errorMsg = error.message;
+          } else if (typeof error === 'object' && error !== null && 'body' in error) {
+             errorMsg = JSON.stringify((error as { body: unknown }).body);
+          }
+          setMessage(`Sign up failed: ${errorMsg}`);
+        }
   };
 
   return (

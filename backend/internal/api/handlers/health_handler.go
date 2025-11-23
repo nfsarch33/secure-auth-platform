@@ -7,4 +7,3 @@ func HealthCheck(c *gin.Context) {
 		"status": "up",
 	})
 }
-

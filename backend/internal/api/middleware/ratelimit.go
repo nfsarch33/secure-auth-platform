@@ -10,18 +10,18 @@ import (
 )
 
 type RateLimiter struct {
-	ips    map[string]*rate.Limiter
-	mu     *sync.RWMutex
-	r      rate.Limit
-	b      int
+	ips map[string]*rate.Limiter
+	mu  *sync.RWMutex
+	r   rate.Limit
+	b   int
 }
 
 func NewRateLimiter(r rate.Limit, b int) *RateLimiter {
 	return &RateLimiter{
-		ips:    make(map[string]*rate.Limiter),
-		mu:     &sync.RWMutex{},
-		r:      r,
-		b:      b,
+		ips: make(map[string]*rate.Limiter),
+		mu:  &sync.RWMutex{},
+		r:   r,
+		b:   b,
 	}
 }
 
@@ -57,4 +57,3 @@ func RateLimitMiddleware(requestsPerMinute int) gin.HandlerFunc {
 		c.Next()
 	}
 }
-

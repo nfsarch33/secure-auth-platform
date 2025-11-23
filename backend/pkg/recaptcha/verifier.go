@@ -69,4 +69,3 @@ func (v *GoogleVerifier) Verify(ctx context.Context, token string) (bool, error)
 
 	return result.Success, nil
 }
-

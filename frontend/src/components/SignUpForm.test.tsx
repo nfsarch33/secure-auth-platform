@@ -6,11 +6,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Mock the auth service
 const mockSignup = vi.fn();
-vi.mock('../api', () => ({
-  DefaultService: {
-    signUp: (...args: any[]) => mockSignup(...args),
-  },
-}));
+    vi.mock('../api', () => ({
+      DefaultService: {
+        signUp: (...args: unknown[]) => mockSignup(...args),
+      },
+    }));
 
 // Mock useNavigate
 const mockNavigate = vi.fn();

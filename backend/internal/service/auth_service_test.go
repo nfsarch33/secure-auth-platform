@@ -45,18 +45,18 @@ var _ = Describe("AuthService", func() {
 	})
 
 	Describe("SignUp", func() {
+		const testEmail = "test@example.com"
+		const testPassword = "password123"
+
 		Context("when user does not exist", func() {
 			It("should create a new user and return token", func() {
-				email := "test@example.com"
-				password := "password123"
-
-				mockRepo.EXPECT().GetByEmail(ctx, email).Return(nil, repository.ErrUserNotFound)
+				mockRepo.EXPECT().GetByEmail(ctx, testEmail).Return(nil, repository.ErrUserNotFound)
 				mockRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
 
-				user, token, err := authService.SignUp(ctx, email, password)
+				user, token, err := authService.SignUp(ctx, testEmail, testPassword)
 				Expect(err).NotTo(HaveOccurred())
 				Expect(user).NotTo(BeNil())
-				Expect(user.Email).To(Equal(email))
+				Expect(user.Email).To(Equal(testEmail))
 				Expect(token).NotTo(BeEmpty())
 			})
 		})
@@ -64,7 +64,6 @@ var _ = Describe("AuthService", func() {
 		Context("when user already exists", func() {
 			It("should return error", func() {
 				email := "existing@example.com"
-				password := "password123"
 				existingUser := &models.User{
 					ID:    uuid.New(),
 					Email: email,
@@ -72,7 +71,7 @@ var _ = Describe("AuthService", func() {
 
 				mockRepo.EXPECT().GetByEmail(ctx, email).Return(existingUser, nil)
 
-				user, token, err := authService.SignUp(ctx, email, password)
+				user, token, err := authService.SignUp(ctx, email, testPassword)
 				Expect(err).To(HaveOccurred())
 				Expect(err).To(Equal(service.ErrUserAlreadyExists))
 				Expect(user).To(BeNil())
@@ -87,7 +86,7 @@ var _ = Describe("AuthService", func() {
 				email := "test@example.com"
 				plainPassword := "password123"
 				hashedPassword, _ := password.HashPassword(plainPassword)
-				
+
 				existingUser := &models.User{
 					ID:           uuid.New(),
 					Email:        email,
@@ -108,7 +107,7 @@ var _ = Describe("AuthService", func() {
 				email := "test@example.com"
 				plainPassword := "wrongpassword"
 				hashedPassword, _ := password.HashPassword("correctpassword")
-				
+
 				existingUser := &models.User{
 					ID:           uuid.New(),
 					Email:        email,

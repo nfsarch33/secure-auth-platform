@@ -87,4 +87,3 @@ func CheckPassword(password, encodedHash string) (bool, error) {
 
 	return subtle.ConstantTimeCompare(hash, compareHash) == 1, nil
 }
-

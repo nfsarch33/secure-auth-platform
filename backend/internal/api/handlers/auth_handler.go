@@ -52,7 +52,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, api.AuthResponse{
 		User: api.User{
-			Id:        openapi_types.UUID(user.ID),
+			Id:        user.ID,
 			Email:     openapi_types.Email(user.Email),
 			CreatedAt: user.CreatedAt,
 		},
@@ -88,7 +88,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 
 	c.JSON(http.StatusOK, api.AuthResponse{
 		User: api.User{
-			Id:        openapi_types.UUID(user.ID),
+			Id:        user.ID,
 			Email:     openapi_types.Email(user.Email),
 			CreatedAt: user.CreatedAt,
 		},

@@ -43,7 +43,7 @@ test.describe('Authentication Flow', () => {
     await authPage.expectSignInSuccess();
   });
 
-  test('should show validation errors', async ({ page }) => {
+  test('should show validation errors', async () => {
     await authPage.gotoSignUp();
     await authPage.submitSignUp();
 
