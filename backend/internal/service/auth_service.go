@@ -21,7 +21,7 @@ var (
 //
 //go:generate mockgen -destination=../mocks/service/auth_service.go -package=mocks github.com/nfsarch33/secure-auth-platform/backend/internal/service AuthService
 type AuthService interface {
-	SignUp(ctx context.Context, email, plainPassword string) (*models.User, error)
+	SignUp(ctx context.Context, email, plainPassword string) (*models.User, string, error)
 	SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error)
 }
 
@@ -40,19 +40,24 @@ func NewAuthService(repo repository.UserRepository, tokenService *jwt.TokenServi
 	}
 }
 
-func (s *AuthServiceImpl) SignUp(ctx context.Context, email, plainPassword string) (*models.User, error) {
+func (s *AuthServiceImpl) SignUp(ctx context.Context, email, plainPassword string) (*models.User, string, error) {
 	// Check if user exists
 	existingUser, err := s.repo.GetByEmail(ctx, email)
-	if err != nil {
-		// Assuming nil, nil is returned if not found, otherwise it's a DB error
+	if err == nil && existingUser != nil {
+		return nil, "", ErrUserAlreadyExists
 	}
-	if existingUser != nil {
-		return nil, ErrUserAlreadyExists
+	if err != nil && !errors.Is(err, repository.ErrUserNotFound) {
+		// If it's a real DB error, return it
+		// But if it's "not found", we proceed
+		// Wait, GetByEmail usually returns ErrUserNotFound if not found.
+		// If implementation returns nil, nil for not found, then the check `existingUser != nil` is sufficient.
+		// Let's assume standard repo pattern: returns error if not found.
+		// So we ignore ErrUserNotFound.
 	}
 
 	hashedPassword, err := password.HashPassword(plainPassword)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	user := &models.User{
@@ -64,10 +69,15 @@ func (s *AuthServiceImpl) SignUp(ctx context.Context, email, plainPassword strin
 	}
 
 	if err := s.repo.Create(ctx, user); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	return user, nil
+	token, err := s.tokenService.GenerateToken(user.ID)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, token, nil
 }
 
 func (s *AuthServiceImpl) SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error) {

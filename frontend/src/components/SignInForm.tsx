@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { AuthService } from '../api';
+import { DefaultService as AuthService } from '../api';
 
 const signInSchema = z.object({
   email: z.string().email('Email is required'),
@@ -23,14 +23,14 @@ export const SignInForm: React.FC = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      const response = await AuthService.postAuthSignin({
-        requestBody: {
-          email: data.email,
-          password: data.password,
-        },
+      const response = await AuthService.signIn({
+        email: data.email,
+        password: data.password,
       });
       setMessage('Sign in successful!');
-      // Store token: localStorage.setItem('token', response.token);
+      if (response.token) {
+        localStorage.setItem('token', response.token);
+      }
     } catch (error) {
       console.error(error);
       setMessage('Sign in failed.');

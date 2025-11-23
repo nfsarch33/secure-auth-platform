@@ -2,9 +2,10 @@ package postgres
 
 import (
 	"context"
+	"errors"
 
-	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/models"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/repository"
 )
@@ -33,7 +34,14 @@ func (r *PostgresUserRepository) Create(ctx context.Context, user *models.User) 
 		VALUES ($1, $2, $3, $4, $5)
 	`
 	_, err := r.db.Exec(ctx, query, user.ID, user.Email, user.PasswordHash, user.CreatedAt, user.UpdatedAt)
-	return err
+	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" { // Unique violation
+			return repository.ErrUserAlreadyExists
+		}
+		return err
+	}
+	return nil
 }
 
 func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
@@ -51,6 +59,9 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 		&user.UpdatedAt,
 	)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, repository.ErrUserNotFound
+		}
 		return nil, err
 	}
 	return &user, nil

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { AuthService } from '../api';
+import { DefaultService as AuthService } from '../api';
 
 const signUpSchema = z.object({
   email: z.string().email('Email is required'),
@@ -23,23 +23,23 @@ export const SignUpForm: React.FC = () => {
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
-      await AuthService.postAuthSignup({
-        requestBody: {
-          email: data.email,
-          password: data.password,
-        },
+      await AuthService.signUp({
+        email: data.email,
+        password: data.password,
       });
       setMessage('Sign up successful! Please sign in.');
-    } catch (error) {
-      console.error(error);
-      setMessage('Sign up failed.');
+    } catch (error: any) {
+      console.error('SignUp Error:', error);
+      // Display detailed error for debugging
+      const errorMsg = error.body ? JSON.stringify(error.body) : error.message || 'Unknown error';
+      setMessage(`Sign up failed: ${errorMsg}`);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <h2>Sign Up</h2>
-      {message && <div role="status">{message}</div>}
+      {message && <div role="alert" aria-live="assertive">{message}</div>}
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" {...register('email')} />

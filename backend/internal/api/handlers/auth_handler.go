@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api"
@@ -28,7 +29,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		return
 	}
 
-	user, err := h.service.SignUp(c.Request.Context(), req.Email, req.Password)
+	user, token, err := h.service.SignUp(c.Request.Context(), req.Email, req.Password)
 	if err != nil {
 		if err == service.ErrUserAlreadyExists {
 			c.JSON(http.StatusConflict, api.ErrorResponse{Error: err.Error()})
@@ -42,9 +43,9 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 		User: api.User{
 			Id:        user.ID.String(),
 			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
+			CreatedAt: user.CreatedAt.Format(time.RFC3339),
 		},
-		Token: nil,
+		Token: &token,
 	})
 }
 
@@ -69,7 +70,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 		User: api.User{
 			Id:        user.ID.String(),
 			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
+			CreatedAt: user.CreatedAt.Format(time.RFC3339),
 		},
 		Token: &token,
 	})

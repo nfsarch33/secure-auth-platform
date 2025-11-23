@@ -1,15 +1,26 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SignInForm } from './SignInForm';
-import { AuthService } from '../api';
+import { BrowserRouter } from 'react-router-dom';
 
-// Mock the AuthService
+// Mock the auth service
+const mockSignin = vi.fn();
 vi.mock('../api', () => ({
-  AuthService: {
-    postAuthSignin: vi.fn(),
+  DefaultService: {
+    signIn: (...args: any[]) => mockSignin(...args),
   },
 }));
+
+// Mock useNavigate
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 describe('SignInForm', () => {
   beforeEach(() => {
@@ -17,16 +28,23 @@ describe('SignInForm', () => {
   });
 
   it('renders sign in form elements', () => {
-    render(<SignInForm />);
+    render(
+      <BrowserRouter>
+        <SignInForm />
+      </BrowserRouter>
+    );
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
   });
 
   it('validates required fields', async () => {
-    render(<SignInForm />);
+    render(
+      <BrowserRouter>
+        <SignInForm />
+      </BrowserRouter>
+    );
     const submitButton = screen.getByRole('button', { name: /sign in/i });
-
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -36,26 +54,47 @@ describe('SignInForm', () => {
   });
 
   it('submits form with valid data', async () => {
-    const mockSignin = vi.mocked(AuthService.postAuthSignin).mockResolvedValue({
-      user: { id: '1', email: 'test@example.com', created_at: '2023-01-01' },
-      token: 'mock-token',
-    });
+    const mockUser = { id: '123', email: 'test@example.com', createdAt: new Date().toISOString() };
+    const mockToken = 'fake-jwt-token';
+    mockSignin.mockResolvedValue({ user: mockUser, token: mockToken });
 
-    render(<SignInForm />);
+    render(
+      <BrowserRouter>
+        <SignInForm />
+      </BrowserRouter>
+    );
     const user = userEvent.setup();
 
     await user.type(screen.getByLabelText(/email/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
+    await user.type(screen.getByLabelText(/password/i), 'Password123!');
     await user.click(screen.getByRole('button', { name: /sign in/i }));
 
     await waitFor(() => {
       expect(mockSignin).toHaveBeenCalledWith({
-        requestBody: {
-          email: 'test@example.com',
-          password: 'password123',
-        },
+        email: 'test@example.com',
+        password: 'Password123!',
       });
+      expect(screen.getByText(/Sign in successful!/i)).toBeInTheDocument();
+    });
+  });
+
+  it('displays API error message on sign in failure', async () => {
+    const errorMessage = 'Invalid credentials';
+    mockSignin.mockRejectedValue(new Error(errorMessage));
+
+    render(
+      <BrowserRouter>
+        <SignInForm />
+      </BrowserRouter>
+    );
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText(/email/i), 'wrong@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'WrongPass');
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(() => {
+        expect(screen.getByRole('status')).toHaveTextContent('Sign in failed.');
     });
   });
 });
-
