@@ -29,7 +29,7 @@ describe('SignUpForm', () => {
 
   it('renders sign up form elements', () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -40,7 +40,7 @@ describe('SignUpForm', () => {
 
   it('validates required fields', async () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -59,7 +59,7 @@ describe('SignUpForm', () => {
     mockSignup.mockResolvedValue({ user: mockUser, token: mockToken });
 
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -85,7 +85,7 @@ describe('SignUpForm', () => {
     mockSignup.mockRejectedValue(new Error(errorMessage));
 
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );

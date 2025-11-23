@@ -25,7 +25,7 @@ test-e2e-docker:
 	# Ensure stack is up
 	docker-compose up -d
 	# Run Playwright
-	docker run --rm --network secure-auth-platform_auth-net \
+	docker run --rm --init --network secure-auth-platform_auth-net \
 		-v "$(PWD)/frontend:/app" \
 		-w /app \
 		-e BASE_URL=http://frontend \
