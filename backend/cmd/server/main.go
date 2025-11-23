@@ -73,6 +73,7 @@ func run() error {
 	r := gin.Default()
 
 	// Middleware
+	r.Use(middleware.LoggerMiddleware())
 	r.Use(middleware.RateLimitMiddleware(60)) // 60 requests per minute
 	r.Use(middleware.SecureHeadersMiddleware())
 
