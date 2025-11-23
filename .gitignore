@@ -19,6 +19,8 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+frontend/playwright-report/
+frontend/test-results/
 
 # IDE
 .vscode/
@@ -40,4 +42,3 @@ docker-compose.override.yml
 # Node (Root)
 node_modules/
 npm-debug.log
-
