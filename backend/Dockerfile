@@ -1,19 +1,34 @@
+# Build Stage
 FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
+# Install build dependencies
+RUN apk add --no-cache git
+
+# Copy module files
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy source code
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /app/bin/server ./cmd/server/main.go
 
-FROM alpine:3.19
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server/main.go
 
-WORKDIR /app
-COPY --from=builder /app/bin/server .
-COPY --from=builder /app/migrations ./migrations
+# Production Stage
+FROM alpine:3.18
 
+WORKDIR /root/
+
+# Install runtime dependencies (e.g. ca-certificates for HTTPS)
+RUN apk add --no-cache ca-certificates
+
+# Copy binary from builder
+COPY --from=builder /app/main .
+
+# Expose port
 EXPOSE 8080
-CMD ["./server"]
 
+# Command to run
+CMD ["./main"]

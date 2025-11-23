@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AuthService } from '../api';
 
 const signUpSchema = z.object({
-  email: z.string().email('Email is required'), // Simplified message for test matching
-  password: z.string().min(1, 'Password is required'), // Simplified
+  email: z.string().email('Email is required'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export const SignUpForm: React.FC = () => {
+  const [message, setMessage] = useState<string>('');
   const {
     register,
     handleSubmit,
@@ -28,15 +29,17 @@ export const SignUpForm: React.FC = () => {
           password: data.password,
         },
       });
-      // Handle success (e.g., redirect)
+      setMessage('Sign up successful! Please sign in.');
     } catch (error) {
-      // Handle error
       console.error(error);
+      setMessage('Sign up failed.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <h2>Sign Up</h2>
+      {message && <div role="status">{message}</div>}
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" {...register('email')} />

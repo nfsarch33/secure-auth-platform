@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,6 +12,7 @@ const signInSchema = z.object({
 type SignInFormData = z.infer<typeof signInSchema>;
 
 export const SignInForm: React.FC = () => {
+  const [message, setMessage] = useState<string>('');
   const {
     register,
     handleSubmit,
@@ -22,20 +23,24 @@ export const SignInForm: React.FC = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      await AuthService.postAuthSignin({
+      const response = await AuthService.postAuthSignin({
         requestBody: {
           email: data.email,
           password: data.password,
         },
       });
-      // Handle success (store token, redirect)
+      setMessage('Sign in successful!');
+      // Store token: localStorage.setItem('token', response.token);
     } catch (error) {
       console.error(error);
+      setMessage('Sign in failed.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <h2>Sign In</h2>
+      {message && <div role="status">{message}</div>}
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="email" {...register('email')} />
@@ -52,4 +57,3 @@ export const SignInForm: React.FC = () => {
     </form>
   );
 };
-

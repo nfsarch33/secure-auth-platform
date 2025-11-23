@@ -2,35 +2,47 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=postgres
-      - DB_USER=auth
-      - DB_PASSWORD=secret
-      - DB_NAME=authdb
-      - JWT_SECRET=dev-secret-key
+      - DATABASE_URL=postgres://user:password@postgres:5432/authdb?sslmode=disable
+      - JWT_SECRET=dev_secret_key_change_in_prod
+      - GIN_MODE=release
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - auth-net
 
   frontend:
-    build: ./frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     ports:
-      - "3000:3000"
+      - "80:80"
+    depends_on:
+      - backend
     networks:
       - auth-net
 
   postgres:
-    image: postgres:16
+    image: postgres:15-alpine
     environment:
-      - POSTGRES_USER=auth
-      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=authdb
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d authdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - auth-net
 
@@ -40,4 +52,3 @@ networks:
 
 volumes:
   postgres_data:
-
