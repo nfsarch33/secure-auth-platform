@@ -1,6 +1,6 @@
 module github.com/nfsarch33/secure-auth-platform/backend
 
-go 1.21
+go 1.23
 
 require (
 	github.com/deepmap/oapi-codegen/v2 v2.1.0
@@ -16,5 +16,6 @@ require (
 	github.com/onsi/gomega v1.29.0
 	github.com/pashagolub/pgxmock/v3 v3.3.0
 	github.com/stretchr/testify v1.8.4
+	go.uber.org/mock v0.6.0
 	golang.org/x/crypto v0.17.0
 )
