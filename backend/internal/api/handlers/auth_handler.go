@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api"
+	"github.com/nfsarch33/secure-auth-platform/backend/internal/api/middleware"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/service"
 	"github.com/nfsarch33/secure-auth-platform/backend/pkg/recaptcha"
 	openapi_types "github.com/oapi-codegen/runtime/types"
@@ -93,5 +95,25 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 			CreatedAt: user.CreatedAt,
 		},
 		Token: token,
+	})
+}
+
+func (h *AuthHandler) GetMe(c *gin.Context) {
+	userID, exists := c.Get(middleware.UserIDKey)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, api.ErrorResponse{Error: "Unauthorized"})
+		return
+	}
+
+	user, err := h.service.GetProfile(c.Request.Context(), userID.(uuid.UUID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: "Internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, api.User{
+		Id:        user.ID,
+		Email:     openapi_types.Email(user.Email),
+		CreatedAt: user.CreatedAt,
 	})
 }

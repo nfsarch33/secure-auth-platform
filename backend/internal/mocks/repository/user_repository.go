@@ -13,6 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	models "github.com/nfsarch33/secure-auth-platform/backend/internal/models"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -71,7 +72,7 @@ func (mr *MockUserRepositoryMockRecorder) GetByEmail(ctx, email any) *gomock.Cal
 }
 
 // GetByID mocks base method.
-func (m *MockUserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
+func (m *MockUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetByID", ctx, id)
 	ret0, _ := ret[0].(*models.User)

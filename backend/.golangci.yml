@@ -23,7 +23,6 @@ linters:
     - unparam
     - dogsled
     - nakedret
-    - exportloopref
     - gocritic
     - goprintffuncname
     - prealloc
@@ -42,5 +41,7 @@ linters-settings:
   misspell:
     locale: US
   govet:
-    check-shadowing: true
+    enable:
+      - shadow
+
 

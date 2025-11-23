@@ -80,10 +80,20 @@ func run() error {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Routes
-	auth := r.Group("/auth")
+	apiGroup := r.Group("/api")
 	{
-		auth.POST("/signup", authHandler.SignUp)
-		auth.POST("/signin", authHandler.SignIn)
+		auth := apiGroup.Group("/auth")
+		{
+			auth.POST("/signup", authHandler.SignUp)
+			auth.POST("/signin", authHandler.SignIn)
+		}
+
+		// Protected routes
+		protected := apiGroup.Group("/")
+		protected.Use(middleware.AuthMiddleware(tokenService))
+		{
+			protected.GET("/me", authHandler.GetMe)
+		}
 	}
 
 	if err := r.Run(":8080"); err != nil {

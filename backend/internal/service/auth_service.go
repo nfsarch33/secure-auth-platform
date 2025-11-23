@@ -23,6 +23,7 @@ var (
 type AuthService interface {
 	SignUp(ctx context.Context, email, plainPassword string) (*models.User, string, error)
 	SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error)
+	GetProfile(ctx context.Context, userID uuid.UUID) (*models.User, error)
 }
 
 type AuthServiceImpl struct {
@@ -98,4 +99,12 @@ func (s *AuthServiceImpl) SignIn(ctx context.Context, email, plainPassword strin
 	}
 
 	return user, token, nil
+}
+
+func (s *AuthServiceImpl) GetProfile(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	user, err := s.repo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

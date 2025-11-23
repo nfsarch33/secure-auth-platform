@@ -37,7 +37,8 @@ test-e2e-docker:
 lint: lint-backend lint-frontend
 
 lint-backend:
-	cd backend && golangci-lint run
+	@echo "Running Backend Lint..."
+	docker run --rm -v "$(PWD)/backend:/app" -w /app golangci/golangci-lint:v1.61.0 golangci-lint run -v
 
 lint-frontend:
 	cd frontend && npm run lint
