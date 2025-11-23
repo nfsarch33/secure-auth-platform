@@ -1,44 +1,66 @@
-# Project Progress
+# Project Progress Tracking
 
-## Status
-- **Phase**: Phase 4: Infrastructure & Automation (Completed)
-- **Phase 5**: E2E & Security Verification (Completed)
-- **Current Task**: Final Validation and Handover
-- **Status**: Stable release v1.1.0 (Playwright + Security Hardening)
+## 📝 Memories & Decisions
+- **Architecture**: Clean Architecture (Layered) for backend to ensure testability and separation of concerns.
+- **Frontend State**: Context API for simplicity (User, Token, IsAuthenticated). Redux deemed overkill.
+- **API Sync**: OpenAPI-First approach. `openapi.yaml` is the source of truth. Code generation for Go (server) and TS (client).
+- **Security**: 
+  - Argon2id for password hashing.
+  - JWT for stateless auth.
+  - reCAPTCHA v3 for bot protection.
+  - Rate limiting (in-memory) middleware.
+  - Secure Headers (HSTS, CSP, etc.).
+- **Testing Strategy**: 
+  - Backend: Ginkgo/Gomega (BDD) + GoMock + PgxMock.
+  - Frontend: Vitest + React Testing Library + JSDOM.
+  - E2E: Playwright in Docker container.
+- **DevOps**:
+  - Docker Compose for local dev.
+  - Kubernetes manifests for deployment.
+  - GitHub Actions for CI/CD.
+  - Conventional Commits enforced via Husky.
 
-## Memories
-- **Project Initialization**:
-    - Git repository initialized and aligned with remote.
-    - Directory structure created based on `project.md`.
-    - Git hooks (`husky`, `commitlint`) configured for Conventional Commits.
-- **Backend Development**:
-    - Go module initialized manually due to shell issues.
-    - OpenAPI spec defined and code generated (types and server interface).
-    - `PostgresUserRepository` implemented with TDD using `pgxmock`.
-    - `AuthService` implemented with TDD using `gomock`.
-    - `AuthHandler` implemented with TDD using `httptest`.
-    - `golangci-lint` configured for strict linting.
-    - Solved Go version compatibility issues (upgraded to 1.23.0).
-    - **Security**: Implemented Rate Limiting (in-memory) and Secure Headers middleware.
-- **Frontend Development**:
-    - React/Vite project scaffolded.
-    - OpenAPI client generated using `openapi-typescript-codegen`.
-    - `SignUpForm` and `SignInForm` components implemented with TDD using `vitest` and `react-testing-library`.
-    - Fixed `document is not defined` error by switching Vitest environment to `jsdom`.
-    - Fixed `vitest` hang in CI by adding `CI=true` support in Makefile.
-    - **E2E**: Implemented Cypress and Playwright E2E tests.
-- **Infrastructure**:
-    - Dockerfiles optimized for production (multi-stage builds).
-    - Kubernetes manifests created for Deployment, Service, and Ingress.
-    - `Makefile` created for automation.
-    - Docker Compose configured for full stack integration.
-- **Validation**:
-    - Backend unit tests passed (Containerized execution).
-    - Frontend unit tests passed (Containerized execution).
-    - Cypress E2E tests passed (Containerized execution).
-    - Playwright E2E tests passed (Containerized execution), verifying functional flows and security headers.
+## 🚀 Status Checklist
 
-## Next Steps
-- Deploy to a real Kubernetes cluster.
-- Implement additional features (e.g., Password Reset, Email Verification).
-- Set up external CI/CD pipelines (e.g., GitHub Actions) mirroring the local hooks.
+### Phase 1: Foundation (✅ Completed)
+- [x] Project scaffolding & directory structure
+- [x] Git configuration (Conventional Commits, Husky)
+- [x] Documentation (README, REPORT, ADR)
+- [x] Makefile automation
+
+### Phase 2: Backend Core (✅ Completed)
+- [x] Go module init & dependency management
+- [x] OpenAPI spec definition (`backend/api/openapi.yaml`)
+- [x] Domain models (`User`)
+- [x] Repository layer (PostgreSQL + PgxMock)
+- [x] Service layer (Argon2id, JWT)
+- [x] API handlers (Gin + generated code)
+- [x] Middleware (Rate Limit, Secure Headers)
+- [x] reCAPTCHA v3 verification
+
+### Phase 3: Frontend Core (✅ Completed)
+- [x] Vite + React + TypeScript setup
+- [x] OpenAPI client generation
+- [x] Authentication forms (SignUp, SignIn)
+- [x] State management (Context API)
+- [x] Validation (Zod + React Hook Form)
+- [x] reCAPTCHA v3 integration
+- [x] Accessibility improvements (Axe checks)
+
+### Phase 4: Infrastructure & QA (✅ Completed)
+- [x] Dockerfiles (optimized multi-stage)
+- [x] Docker Compose setup
+- [x] Kubernetes manifests
+- [x] CI/CD Workflows (GitHub Actions)
+- [x] Security Scans (gosec)
+
+### Phase 5: Verification (✅ Completed)
+- [x] Backend Unit Tests (100% pass)
+- [x] Frontend Unit Tests (100% pass)
+- [x] E2E Tests (Playwright - 100% pass)
+- [x] Final Report & Architecture Diagram
+
+## 📊 Test Status
+- **Backend**: All specs passed (Handlers, Service, Repository).
+- **Frontend**: All component tests passed.
+- **E2E**: Full flow + Accessibility + Rate Limit verified.
