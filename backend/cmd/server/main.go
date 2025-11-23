@@ -62,7 +62,7 @@ func run() error {
 
 	recaptchaSecret := os.Getenv("RECAPTCHA_SECRET_KEY")
 	if recaptchaSecret == "" {
-		recaptchaSecret = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" // Google test secret
+		recaptchaSecret = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe" // nosec G101
 	}
 	recaptchaDisabled := os.Getenv("RECAPTCHA_DISABLED") == "true"
 	recaptchaVerifier := recaptcha.NewVerifier(recaptchaSecret, recaptchaDisabled)
