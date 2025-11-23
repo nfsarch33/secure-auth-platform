@@ -1,0 +1,43 @@
+# Backend
+backend/bin/
+backend/tmp/
+backend/.air.toml
+backend/*.exe
+backend/*.log
+backend/coverage.out
+backend/vendor/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+.env
+
+# Terraform/Infrastructure (if any)
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Node (Root)
+node_modules/
+npm-debug.log
+

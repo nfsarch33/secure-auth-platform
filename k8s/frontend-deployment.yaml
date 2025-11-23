@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: auth-frontend
+  template:
+    metadata:
+      labels:
+        app: auth-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: auth-frontend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-frontend
+spec:
+  selector:
+    app: auth-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+
