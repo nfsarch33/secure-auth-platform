@@ -76,6 +76,9 @@ func run() error {
 	r.Use(middleware.RateLimitMiddleware(60)) // 60 requests per minute
 	r.Use(middleware.SecureHeadersMiddleware())
 
+	// Health Check
+	r.GET("/health", handlers.HealthCheck)
+
 	// Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

@@ -60,6 +60,7 @@ jobs:
 
       - name: Run Tests
         env:
+          DATABASE_URL: postgres://user:password@localhost:5432/auth_db?sslmode=disable
           DB_HOST: localhost
           DB_PORT: 5432
           DB_USER: user

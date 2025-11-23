@@ -53,6 +53,7 @@ jobs:
       - name: Start Backend
         working-directory: ./backend
         env:
+          DATABASE_URL: postgres://user:password@postgres:5432/auth_db?sslmode=disable
           DB_HOST: postgres
           DB_PORT: 5432
           DB_USER: user
