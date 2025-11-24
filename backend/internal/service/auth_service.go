@@ -23,6 +23,7 @@ var (
 type AuthService interface {
 	SignUp(ctx context.Context, email, plainPassword string) (*models.User, string, error)
 	SignIn(ctx context.Context, email, plainPassword string) (*models.User, string, error)
+	GetProfile(ctx context.Context, userID uuid.UUID) (*models.User, error)
 }
 
 type AuthServiceImpl struct {
@@ -47,12 +48,7 @@ func (s *AuthServiceImpl) SignUp(ctx context.Context, email, plainPassword strin
 		return nil, "", ErrUserAlreadyExists
 	}
 	if err != nil && !errors.Is(err, repository.ErrUserNotFound) {
-		// If it's a real DB error, return it
-		// But if it's "not found", we proceed
-		// Wait, GetByEmail usually returns ErrUserNotFound if not found.
-		// If implementation returns nil, nil for not found, then the check `existingUser != nil` is sufficient.
-		// Let's assume standard repo pattern: returns error if not found.
-		// So we ignore ErrUserNotFound.
+		return nil, "", err
 	}
 
 	hashedPassword, err := password.HashPassword(plainPassword)
@@ -68,7 +64,7 @@ func (s *AuthServiceImpl) SignUp(ctx context.Context, email, plainPassword strin
 		UpdatedAt:    time.Now(),
 	}
 
-	if err := s.repo.Create(ctx, user); err != nil {
+	if err = s.repo.Create(ctx, user); err != nil {
 		return nil, "", err
 	}
 
@@ -103,4 +99,12 @@ func (s *AuthServiceImpl) SignIn(ctx context.Context, email, plainPassword strin
 	}
 
 	return user, token, nil
+}
+
+func (s *AuthServiceImpl) GetProfile(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	user, err := s.repo.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

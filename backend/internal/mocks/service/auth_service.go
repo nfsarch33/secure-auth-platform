@@ -13,6 +13,7 @@ import (
 	context "context"
 	reflect "reflect"
 
+	uuid "github.com/google/uuid"
 	models "github.com/nfsarch33/secure-auth-platform/backend/internal/models"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -39,6 +40,21 @@ func NewMockAuthService(ctrl *gomock.Controller) *MockAuthService {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockAuthService) EXPECT() *MockAuthServiceMockRecorder {
 	return m.recorder
+}
+
+// GetProfile mocks base method.
+func (m *MockAuthService) GetProfile(ctx context.Context, userID uuid.UUID) (*models.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetProfile", ctx, userID)
+	ret0, _ := ret[0].(*models.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetProfile indicates an expected call of GetProfile.
+func (mr *MockAuthServiceMockRecorder) GetProfile(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProfile", reflect.TypeOf((*MockAuthService)(nil).GetProfile), ctx, userID)
 }
 
 // SignIn mocks base method.

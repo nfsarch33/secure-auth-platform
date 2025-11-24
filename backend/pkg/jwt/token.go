@@ -14,8 +14,8 @@ var (
 )
 
 type TokenService struct {
-	secretKey     []byte
-	issuer        string
+	secretKey      []byte
+	issuer         string
 	accessDuration time.Duration
 }
 
@@ -26,8 +26,8 @@ type Claims struct {
 
 func NewTokenService(secretKey string, issuer string, accessDuration time.Duration) *TokenService {
 	return &TokenService{
-		secretKey:     []byte(secretKey),
-		issuer:        issuer,
+		secretKey:      []byte(secretKey),
+		issuer:         issuer,
 		accessDuration: accessDuration,
 	}
 }
@@ -65,4 +65,3 @@ func (s *TokenService) ValidateToken(tokenString string) (*Claims, error) {
 
 	return nil, ErrInvalidToken
 }
-

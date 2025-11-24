@@ -102,6 +102,7 @@ var _ = Describe("AuthHandler", func() {
 			Expect(resp.Error).To(Equal("Invalid CAPTCHA"))
 		})
 
+		//nolint:dupl
 		It("should return 409 Conflict if user already exists", func() {
 			reqBody := api.SignUpRequest{
 				Email:    openapi_types.Email("existing@example.com"),
@@ -146,6 +147,7 @@ var _ = Describe("AuthHandler", func() {
 			Expect(resp.Token).To(Equal(token))
 		})
 
+		//nolint:dupl
 		It("should return 401 Unauthorized on invalid credentials", func() {
 			reqBody := api.SignInRequest{
 				Email:    openapi_types.Email("test@example.com"),

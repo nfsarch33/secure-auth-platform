@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/api"
+	"github.com/nfsarch33/secure-auth-platform/backend/internal/api/middleware"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/service"
 	"github.com/nfsarch33/secure-auth-platform/backend/pkg/recaptcha"
 	openapi_types "github.com/oapi-codegen/runtime/types"
@@ -52,7 +54,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, api.AuthResponse{
 		User: api.User{
-			Id:        openapi_types.UUID(user.ID),
+			Id:        user.ID,
 			Email:     openapi_types.Email(user.Email),
 			CreatedAt: user.CreatedAt,
 		},
@@ -88,10 +90,36 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 
 	c.JSON(http.StatusOK, api.AuthResponse{
 		User: api.User{
-			Id:        openapi_types.UUID(user.ID),
+			Id:        user.ID,
 			Email:     openapi_types.Email(user.Email),
 			CreatedAt: user.CreatedAt,
 		},
 		Token: token,
+	})
+}
+
+func (h *AuthHandler) SignOut(c *gin.Context) {
+	// For stateless JWT, we just return 200 OK.
+	// In a real-world scenario with blacklisting, we would invalidate the token here.
+	c.Status(http.StatusOK)
+}
+
+func (h *AuthHandler) GetMe(c *gin.Context) {
+	userID, exists := c.Get(middleware.UserIDKey)
+	if !exists {
+		c.JSON(http.StatusUnauthorized, api.ErrorResponse{Error: "Unauthorized"})
+		return
+	}
+
+	user, err := h.service.GetProfile(c.Request.Context(), userID.(uuid.UUID))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: "Internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, api.User{
+		Id:        user.ID,
+		Email:     openapi_types.Email(user.Email),
+		CreatedAt: user.CreatedAt,
 	})
 }

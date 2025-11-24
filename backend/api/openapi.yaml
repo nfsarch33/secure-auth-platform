@@ -39,9 +39,13 @@ components:
         email:
           type: string
           format: email
+          x-oapi-codegen-extra-tags:
+            binding: required,email
         password:
           type: string
           minLength: 8
+          x-oapi-codegen-extra-tags:
+            binding: required,min=8
         captchaToken:
           type: string
       required:
@@ -54,8 +58,12 @@ components:
         email:
           type: string
           format: email
+          x-oapi-codegen-extra-tags:
+            binding: required,email
         password:
           type: string
+          x-oapi-codegen-extra-tags:
+            binding: required
         captchaToken:
           type: string
       required:
@@ -136,7 +144,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
-  /users/me:
+  /auth/signout:
+    post:
+      summary: Sign out a user
+      operationId: SignOut
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Sign out successful
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /me:
     get:
       summary: Get current user profile
       operationId: GetCurrentUser

@@ -27,15 +27,15 @@ type ErrorResponse struct {
 // SignInRequest defines model for SignInRequest.
 type SignInRequest struct {
 	CaptchaToken *string             `json:"captchaToken,omitempty"`
-	Email        openapi_types.Email `json:"email"`
-	Password     string              `json:"password"`
+	Email        openapi_types.Email `binding:"required,email" json:"email"`
+	Password     string              `binding:"required" json:"password"`
 }
 
 // SignUpRequest defines model for SignUpRequest.
 type SignUpRequest struct {
 	CaptchaToken *string             `json:"captchaToken,omitempty"`
-	Email        openapi_types.Email `json:"email"`
-	Password     string              `json:"password"`
+	Email        openapi_types.Email `binding:"required,email" json:"email"`
+	Password     string              `binding:"required,min=8" json:"password"`
 }
 
 // User defines model for User.
