@@ -1,4 +1,4 @@
-/* generated using openapi-typescript-codegen -- do no edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -6,13 +6,10 @@ import type { AuthResponse } from '../models/AuthResponse';
 import type { SignInRequest } from '../models/SignInRequest';
 import type { SignUpRequest } from '../models/SignUpRequest';
 import type { User } from '../models/User';
-
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-
 export class DefaultService {
-
     /**
      * Register a new user
      * @param requestBody
@@ -33,7 +30,6 @@ export class DefaultService {
             },
         });
     }
-
     /**
      * Authenticate a user
      * @param requestBody
@@ -53,7 +49,6 @@ export class DefaultService {
             },
         });
     }
-
     /**
      * Get current user profile
      * @returns User User profile retrieved successfully
@@ -68,5 +63,4 @@ export class DefaultService {
             },
         });
     }
-
 }
