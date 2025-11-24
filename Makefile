@@ -38,7 +38,7 @@ lint: lint-backend lint-frontend
 
 lint-backend:
 	@echo "Running Backend Lint..."
-	docker run --rm -v "$(PWD)/backend:/app" -w /app golangci/golangci-lint:v1.61.0 golangci-lint run -v
+	docker run --rm -v "$(PWD)/backend:/app" -v golangci-lint-cache:/root/.cache -v go-mod-cache:/go/pkg/mod -w /app golangci/golangci-lint:v1.61.0 golangci-lint run -v
 
 lint-frontend:
 	cd frontend && npm run lint
