@@ -19,19 +19,17 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: DB_HOST
-          value: "postgres"
-        - name: DB_USER
-          value: "auth"
-        - name: DB_PASSWORD
-          value: "secret"
-        - name: DB_NAME
-          value: "authdb"
+        - name: DATABASE_URL
+          value: "postgres://user:password@postgres:5432/auth_db?sslmode=disable"
+        - name: JWT_SECRET
+          value: "k8s-secret-key-change-me"
+        - name: GIN_MODE
+          value: "release"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-backend
+  name: backend
 spec:
   selector:
     app: auth-backend

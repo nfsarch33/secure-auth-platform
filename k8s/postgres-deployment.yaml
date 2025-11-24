@@ -19,11 +19,11 @@ spec:
         - containerPort: 5432
         env:
         - name: POSTGRES_USER
-          value: "auth"
+          value: "user"
         - name: POSTGRES_PASSWORD
-          value: "secret"
+          value: "password"
         - name: POSTGRES_DB
-          value: "authdb"
+          value: "auth_db"
 ---
 apiVersion: v1
 kind: Service

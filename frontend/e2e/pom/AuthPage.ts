@@ -12,7 +12,7 @@ export class AuthPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.signUpHeading = page.getByRole('heading', { name: 'Sign Up' });
+    this.signUpHeading = page.getByRole('heading', { name: 'Create Account' });
     this.signInHeading = page.getByRole('heading', { name: 'Sign In' });
     this.emailInput = page.getByLabel('Email');
     this.passwordInput = page.getByLabel('Password');

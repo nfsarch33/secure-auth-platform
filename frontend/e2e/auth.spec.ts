@@ -41,9 +41,23 @@ test.describe('Authentication Flow', () => {
     await authPage.submitSignIn();
 
     await authPage.expectSignInSuccess();
+
+    // 3. Verify Profile Page Access
+    await expect(page).toHaveURL(/\/me$/);
+    await expect(page.getByRole('heading', { name: 'Your Profile' })).toBeVisible();
+    await expect(page.getByText(email)).toBeVisible();
+
+    // 4. Sign Out (click button in main content area)
+    await page.getByRole('main').getByRole('button', { name: 'Sign Out' }).click();
+    await expect(page).toHaveURL(/\/signin$/);
   });
 
-  test('should show validation errors', async ({ page }) => {
+  test('should redirect to signin when accessing protected route without auth', async ({ page }) => {
+    await page.goto('/me');
+    await expect(page).toHaveURL(/\/signin$/);
+  });
+
+  test('should show validation errors', async () => {
     await authPage.gotoSignUp();
     await authPage.submitSignUp();
 
@@ -71,7 +85,7 @@ test.describe('Security & Regression', () => {
     // Use process.env.BACKEND_URL if available, otherwise default to backend service name in docker
     const backendUrl = process.env.BACKEND_URL || 'http://backend:8080';
     // Send a POST request to trigger the handler and middleware stack securely
-    const response = await request.post(`${backendUrl}/auth/signin`, {
+    const response = await request.post(`${backendUrl}/api/auth/signin`, {
       data: {
         email: "test@example.com",
         password: "wrongpassword"
@@ -97,7 +111,7 @@ test.describe('Security & Regression', () => {
     // We can try to trigger the rate limiter by sending > 5 requests rapidly.
     let rateLimited = false;
     for (let i = 0; i < 10; i++) {
-      const res = await request.post(`${backendUrl}/auth/signin`, {
+      const res = await request.post(`${backendUrl}/api/auth/signin`, {
         data: { email: "test@example.com", password: "wrong" }
       });
       if (res.status() === 429) {
