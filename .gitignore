@@ -42,3 +42,6 @@ docker-compose.override.yml
 # Node (Root)
 node_modules/
 npm-debug.log
+
+# Private Project Documentation
+project/
