@@ -12,10 +12,10 @@ log.setLevel(level);
  * Provides a consistent logging interface for the frontend application.
  */
 export const logger = {
-  trace: (...msg: any[]) => log.trace(...msg),
-  debug: (...msg: any[]) => log.debug(...msg),
-  info: (...msg: any[]) => log.info(...msg),
-  warn: (...msg: any[]) => log.warn(...msg),
-  error: (...msg: any[]) => log.error(...msg),
+  trace: (...msg: unknown[]) => log.trace(...msg),
+  debug: (...msg: unknown[]) => log.debug(...msg),
+  info: (...msg: unknown[]) => log.info(...msg),
+  warn: (...msg: unknown[]) => log.warn(...msg),
+  error: (...msg: unknown[]) => log.error(...msg),
 };
 
