@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { DefaultService as AuthService } from '../api';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { logger } from '../utils/logger';
 
 const signUpSchema = z.object({
   email: z.string().email('Email is required'),
@@ -38,7 +39,7 @@ export const SignUpForm: React.FC = () => {
       });
       setMessage('Sign up successful! Please sign in.');
         } catch (error: unknown) {
-          console.error('SignUp Error:', error);
+          logger.error('SignUp Error:', error);
           // Display detailed error for debugging
           let errorMsg = 'Unknown error';
           if (error instanceof Error) {

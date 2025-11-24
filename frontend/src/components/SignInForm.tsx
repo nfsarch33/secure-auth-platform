@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { DefaultService as AuthService } from '../api';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { logger } from '../utils/logger';
 
 const signInSchema = z.object({
   email: z.string().email('Email is required'),
@@ -41,7 +42,7 @@ export const SignInForm: React.FC = () => {
         localStorage.setItem('token', response.token);
       }
     } catch (error) {
-      console.error(error);
+      logger.error('SignIn Error:', error);
       setMessage('Sign in failed.');
     }
   };

@@ -71,7 +71,7 @@ test.describe('Security & Regression', () => {
     // Use process.env.BACKEND_URL if available, otherwise default to backend service name in docker
     const backendUrl = process.env.BACKEND_URL || 'http://backend:8080';
     // Send a POST request to trigger the handler and middleware stack securely
-    const response = await request.post(`${backendUrl}/auth/signin`, {
+    const response = await request.post(`${backendUrl}/api/auth/signin`, {
       data: {
         email: "test@example.com",
         password: "wrongpassword"
@@ -97,7 +97,7 @@ test.describe('Security & Regression', () => {
     // We can try to trigger the rate limiter by sending > 5 requests rapidly.
     let rateLimited = false;
     for (let i = 0; i < 10; i++) {
-      const res = await request.post(`${backendUrl}/auth/signin`, {
+      const res = await request.post(`${backendUrl}/api/auth/signin`, {
         data: { email: "test@example.com", password: "wrong" }
       });
       if (res.status() === 429) {
