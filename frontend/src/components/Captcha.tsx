@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface CaptchaProps {
@@ -8,7 +8,6 @@ interface CaptchaProps {
 
 export const Captcha: React.FC<CaptchaProps> = ({ onVerify, action }) => {
   const { executeRecaptcha } = useGoogleReCaptcha();
-  const [token, setToken] = useState<string>('');
 
   useEffect(() => {
     const handleReCaptchaVerify = async () => {
@@ -16,7 +15,6 @@ export const Captcha: React.FC<CaptchaProps> = ({ onVerify, action }) => {
         return;
       }
       const token = await executeRecaptcha(action);
-      setToken(token);
       onVerify(token);
     };
 

@@ -6,11 +6,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Mock the auth service
 const mockSignup = vi.fn();
-vi.mock('../api', () => ({
-  DefaultService: {
-    signUp: (...args: any[]) => mockSignup(...args),
-  },
-}));
+    vi.mock('../api', () => ({
+      DefaultService: {
+        signUp: (...args: unknown[]) => mockSignup(...args),
+      },
+    }));
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -108,7 +108,7 @@ describe('SignUpForm', () => {
     await waitFor(() => {
       // The component catches error and sets generic "Sign up failed." message or logs it.
       // Looking at the component code: setMessage('Sign up failed.');
-      expect(screen.getByRole('alert')).toHaveTextContent(/Sign up failed/i);
+      expect(screen.getByRole('status')).toHaveTextContent(/Sign up failed/i);
     });
   });
 });

@@ -3,12 +3,15 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SignInForm } from './SignInForm';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../contexts/AuthContext';
 
 // Mock the auth service
 const mockSignin = vi.fn();
+const mockGetCurrentUser = vi.fn();
 vi.mock('../api', () => ({
   DefaultService: {
-    signIn: (...args: any[]) => mockSignin(...args),
+    signIn: (...args: unknown[]) => mockSignin(...args),
+    getCurrentUser: (...args: unknown[]) => mockGetCurrentUser(...args),
   },
 }));
 
@@ -34,25 +37,36 @@ describe('SignInForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockExecuteRecaptcha.mockResolvedValue('mock-captcha-token');
+    // Default mock for getCurrentUser to avoid failures in AuthProvider
+    mockGetCurrentUser.mockResolvedValue({ id: '123', email: 'test@example.com' });
   });
 
-  it('renders sign in form elements', () => {
+  it('renders sign in form elements', async () => {
     render(
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <SignInForm />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <SignInForm />
+        </BrowserRouter>
+      </AuthProvider>
     );
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    await waitFor(() => {
+        expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    });
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
   });
 
   it('validates required fields', async () => {
     render(
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <SignInForm />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <SignInForm />
+        </BrowserRouter>
+      </AuthProvider>
     );
+    // Wait for initial render
+    await waitFor(() => expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument());
+
     const submitButton = screen.getByRole('button', { name: /sign in/i });
     fireEvent.click(submitButton);
 
@@ -66,11 +80,14 @@ describe('SignInForm', () => {
     const mockUser = { id: '123', email: 'test@example.com', createdAt: new Date().toISOString() };
     const mockToken = 'fake-jwt-token';
     mockSignin.mockResolvedValue({ user: mockUser, token: mockToken });
+    mockGetCurrentUser.mockResolvedValue(mockUser);
 
     render(
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <SignInForm />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <SignInForm />
+        </BrowserRouter>
+      </AuthProvider>
     );
     const user = userEvent.setup();
 
@@ -93,9 +110,11 @@ describe('SignInForm', () => {
     mockSignin.mockRejectedValue(new Error(errorMessage));
 
     render(
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <SignInForm />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <SignInForm />
+        </BrowserRouter>
+      </AuthProvider>
     );
     const user = userEvent.setup();
 
@@ -108,3 +127,4 @@ describe('SignInForm', () => {
     });
   });
 });
+

@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { DefaultService as AuthService } from '../api';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { logger } from '../utils/logger';
+import { useNavigate } from 'react-router-dom';
 
 const signUpSchema = z.object({
   email: z.string().email('Email is required'),
@@ -14,6 +16,7 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export const SignUpForm: React.FC = () => {
   const [message, setMessage] = useState<string>('');
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -37,31 +40,46 @@ export const SignUpForm: React.FC = () => {
         captchaToken: captchaToken,
       });
       setMessage('Sign up successful! Please sign in.');
-    } catch (error: any) {
-      console.error('SignUp Error:', error);
-      // Display detailed error for debugging
-      const errorMsg = error.body ? JSON.stringify(error.body) : error.message || 'Unknown error';
-      setMessage(`Sign up failed: ${errorMsg}`);
-    }
+      // Navigate to signin after a short delay
+      setTimeout(() => {
+        navigate('/signin');
+      }, 1500);
+        } catch (error: unknown) {
+          logger.error('SignUp Error:', error);
+          // Display detailed error for debugging
+          let errorMsg = 'Unknown error';
+          if (error instanceof Error) {
+             errorMsg = error.message;
+          } else if (typeof error === 'object' && error !== null && 'body' in error) {
+             errorMsg = JSON.stringify((error as { body: unknown }).body);
+          }
+          setMessage(`Sign up failed: ${errorMsg}`);
+        }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="signup-heading">
-      <h1 id="signup-heading">Sign Up</h1>
-      {message && <div role="alert" aria-live="assertive">{message}</div>}
-      <div>
-        <label htmlFor="email">Email</label>
-        <input id="email" type="email" {...register('email')} />
-        {errors.email && <span role="alert">{errors.email.message}</span>}
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input id="password" type="password" {...register('password')} />
-        {errors.password && <span role="alert">{errors.password.message}</span>}
-      </div>
-      <button type="submit" disabled={isSubmitting}>
-        Sign Up
-      </button>
-    </form>
+    <div className="auth-container">
+      <form onSubmit={handleSubmit(onSubmit)} aria-labelledby="signup-heading">
+        <h1 id="signup-heading">Create Account</h1>
+        {message && (
+          <div role="status" className={`status-message ${message.includes('successful') ? 'success' : 'error'}`}>
+            {message}
+          </div>
+        )}
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" placeholder="you@example.com" {...register('email')} />
+          {errors.email && <span role="alert">{errors.email.message}</span>}
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" {...register('password')} />
+          {errors.password && <span role="alert">{errors.password.message}</span>}
+        </div>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+        </button>
+      </form>
+    </div>
   );
 };
