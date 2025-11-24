@@ -64,7 +64,8 @@ A multi-layered testing strategy ensures reliability:
 1.  **Refresh Tokens**: Implement a refresh token rotation mechanism using HttpOnly cookies to enhance security and user session management.
 2.  **Distributed Rate Limiting**: Migrate from in-memory rate limiting to **Redis** to support horizontal scaling across multiple backend replicas.
 3.  **MFA**: Add Multi-Factor Authentication (TOTP) for an additional layer of security.
-4.  **Monitoring**: Integrate **Prometheus** and **Grafana** for real-time metrics and alerting.
+4.  **Email Verification**: Implement email verification flow (send link with token) to verify user identity upon registration.
+5.  **Monitoring**: Integrate **Prometheus** and **Grafana** for real-time metrics and alerting.
 
 ## 6. Conclusion
 

@@ -48,5 +48,3 @@ npm-debug.log
 project/
 docs/
 
-# Generated Reports
-*.pdf
