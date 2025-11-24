@@ -53,7 +53,12 @@ func run() error {
 
 	secretKey := os.Getenv("JWT_SECRET")
 	if secretKey == "" {
-		secretKey = "super-secret-key-change-in-production"
+		if os.Getenv("GIN_MODE") == "release" {
+			slog.Error("JWT_SECRET must be set in release mode")
+			return os.ErrInvalid
+		}
+		slog.Warn("JWT_SECRET is not set, using default for development")
+		secretKey = "dev-secret-key" // #nosec G101
 	}
 
 	userRepo := postgres.NewPostgresUserRepository(pool)

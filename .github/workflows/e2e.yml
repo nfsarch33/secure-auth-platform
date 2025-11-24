@@ -89,16 +89,17 @@ jobs:
         env:
           VITE_API_URL: http://localhost:8080
         run: |
-          npm run preview -- --port 3000 &
+          npm run preview -- --host --port 3000 &
           echo "Frontend started"
           # Wait for frontend
-          timeout 30 bash -c 'until curl -s http://localhost:3000 > /dev/null; do sleep 1; done'
+          timeout 60 bash -c 'until curl -s http://127.0.0.1:3000 > /dev/null; do sleep 1; done'
 
       # Run Playwright
       - name: Run Playwright Tests
         working-directory: ./frontend
         env:
-          BASE_URL: http://localhost:3000
+          BASE_URL: http://127.0.0.1:3000
+          BACKEND_URL: http://localhost:8080
           CI: true
         run: npx playwright test
 
