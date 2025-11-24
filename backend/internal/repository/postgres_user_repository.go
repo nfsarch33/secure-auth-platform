@@ -2,7 +2,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/models"
@@ -24,15 +26,56 @@ func NewPostgresUserRepository(db DBExecutor) UserRepository {
 }
 
 func (r *PostgresUserRepository) Create(ctx context.Context, user *models.User) error {
-	// Intentionally failing implementation for TDD (Red phase)
-	return nil
+	query := `
+		INSERT INTO users (id, email, password_hash, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5)
+	`
+	_, err := r.db.Exec(ctx, query, user.ID, user.Email, user.PasswordHash, user.CreatedAt, user.UpdatedAt)
+	return err
 }
 
 func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (*models.User, error) {
-	return nil, nil
+	query := `
+		SELECT id, email, password_hash, created_at, updated_at
+		FROM users
+		WHERE email = $1
+	`
+	var user models.User
+	err := r.db.QueryRow(ctx, query, email).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
 }
 
-func (r *PostgresUserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
-	return nil, nil
+func (r *PostgresUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	query := `
+		SELECT id, email, password_hash, created_at, updated_at
+		FROM users
+		WHERE id = $1
+	`
+	var user models.User
+	err := r.db.QueryRow(ctx, query, id).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, ErrUserNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
 }
-

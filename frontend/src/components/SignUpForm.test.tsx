@@ -6,11 +6,11 @@ import { BrowserRouter } from 'react-router-dom';
 
 // Mock the auth service
 const mockSignup = vi.fn();
-vi.mock('../api', () => ({
-  DefaultService: {
-    signUp: (...args: any[]) => mockSignup(...args),
-  },
-}));
+    vi.mock('../api', () => ({
+      DefaultService: {
+        signUp: (...args: unknown[]) => mockSignup(...args),
+      },
+    }));
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
@@ -22,14 +22,23 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
+// Mock react-google-recaptcha-v3
+const mockExecuteRecaptcha = vi.fn();
+vi.mock('react-google-recaptcha-v3', () => ({
+  useGoogleReCaptcha: () => ({
+    executeRecaptcha: mockExecuteRecaptcha,
+  }),
+}));
+
 describe('SignUpForm', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockExecuteRecaptcha.mockResolvedValue('mock-captcha-token');
   });
 
   it('renders sign up form elements', () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -40,7 +49,7 @@ describe('SignUpForm', () => {
 
   it('validates required fields', async () => {
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -59,7 +68,7 @@ describe('SignUpForm', () => {
     mockSignup.mockResolvedValue({ user: mockUser, token: mockToken });
 
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -73,6 +82,7 @@ describe('SignUpForm', () => {
       expect(mockSignup).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'Password123!',
+        captchaToken: 'mock-captcha-token',
       });
       // The component currently sets a message, it doesn't automatically navigate or login in the current implementation shown in read_file
       // But let's check if success message appears
@@ -85,7 +95,7 @@ describe('SignUpForm', () => {
     mockSignup.mockRejectedValue(new Error(errorMessage));
 
     render(
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <SignUpForm />
       </BrowserRouter>
     );
@@ -98,7 +108,7 @@ describe('SignUpForm', () => {
     await waitFor(() => {
       // The component catches error and sets generic "Sign up failed." message or logs it.
       // Looking at the component code: setMessage('Sign up failed.');
-      expect(screen.getByRole('alert')).toHaveTextContent(/Sign up failed/i);
+      expect(screen.getByRole('status')).toHaveTextContent(/Sign up failed/i);
     });
   });
 });

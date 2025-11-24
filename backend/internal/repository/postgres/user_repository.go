@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/nfsarch33/secure-auth-platform/backend/internal/models"
@@ -67,7 +68,25 @@ func (r *PostgresUserRepository) GetByEmail(ctx context.Context, email string) (
 	return &user, nil
 }
 
-func (r *PostgresUserRepository) GetByID(ctx context.Context, id string) (*models.User, error) {
-	// Implementation pending
-	return nil, nil
+func (r *PostgresUserRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.User, error) {
+	query := `
+		SELECT id, email, password_hash, created_at, updated_at
+		FROM users
+		WHERE id = $1
+	`
+	var user models.User
+	err := r.db.QueryRow(ctx, query, id).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, repository.ErrUserNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
 }

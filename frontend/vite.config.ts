@@ -9,13 +9,21 @@ export default defineConfig({
       '/api': {
         target: 'http://backend:8080',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+  preview: {
+    proxy: {
+      '/api': {
+        target: 'http://backend:8080',
+        changeOrigin: true,
       },
     },
   },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/setupTests.ts'],
-    globals: true
+    globals: true,
+    exclude: ['**/node_modules/**', '**/dist/**', '**/cypress/**', '**/e2e/**'],
   },
 });

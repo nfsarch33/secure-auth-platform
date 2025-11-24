@@ -19,6 +19,8 @@ frontend/.env.production.local
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+frontend/playwright-report/
+frontend/test-results/
 
 # IDE
 .vscode/
@@ -27,6 +29,7 @@ frontend/yarn-error.log*
 *.swo
 .DS_Store
 Thumbs.db
+.cursor/
 
 # Docker
 docker-compose.override.yml
@@ -41,3 +44,9 @@ docker-compose.override.yml
 node_modules/
 npm-debug.log
 
+# Private Project Documentation
+project/
+docs/
+
+# Generated Reports
+*.pdf

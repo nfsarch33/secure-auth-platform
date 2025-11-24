@@ -1,4 +1,4 @@
-/* generated using openapi-typescript-codegen -- do no edit */
+/* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
@@ -6,13 +6,10 @@ import type { AuthResponse } from '../models/AuthResponse';
 import type { SignInRequest } from '../models/SignInRequest';
 import type { SignUpRequest } from '../models/SignUpRequest';
 import type { User } from '../models/User';
-
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-
 export class DefaultService {
-
     /**
      * Register a new user
      * @param requestBody
@@ -33,7 +30,6 @@ export class DefaultService {
             },
         });
     }
-
     /**
      * Authenticate a user
      * @param requestBody
@@ -53,7 +49,20 @@ export class DefaultService {
             },
         });
     }
-
+    /**
+     * Sign out a user
+     * @returns any Sign out successful
+     * @throws ApiError
+     */
+    public static signOut(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/auth/signout',
+            errors: {
+                401: `Unauthorized`,
+            },
+        });
+    }
     /**
      * Get current user profile
      * @returns User User profile retrieved successfully
@@ -62,11 +71,10 @@ export class DefaultService {
     public static getCurrentUser(): CancelablePromise<User> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/users/me',
+            url: '/me',
             errors: {
                 401: `Unauthorized`,
             },
         });
     }
-
 }
