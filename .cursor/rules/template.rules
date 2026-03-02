@@ -1,0 +1,20 @@
+---
+description: "Secure Auth Platform - Project Rules"
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Project: secure-auth-platform
+
+# Identity: nfsarch33 / jaslian@gmail.com (personal repo -- NEVER use Zendesk identity)
+# Remote: git@github-agtc:nfsarch33/secure-auth-platform.git
+
+# Stack: Go backend + React/TypeScript frontend + Docker Compose
+# Version strategy: tag-based (v*.*.*), CI triggers on push/PR to main
+
+# Pepper key files:
+# - global-memories/engineering-principles-sop.md
+# - global-memories/memory-sop.md
+
+# Quality gates: backend lint + tests, frontend lint + Playwright E2E before PR.
+# Pre-push hook: runs make check (lint + tests + Docker build). Use --no-verify for branch deletions only.
