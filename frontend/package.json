@@ -38,8 +38,8 @@
     "@types/loglevel": "^1.5.4",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.2.1",
-    "@vitest/coverage-v8": "^4.0.13",
+    "@vitejs/plugin-react": "^6.0.3",
+    "@vitest/coverage-v8": "^4.1.9",
     "cypress": "^15.15.0",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.1.0",
@@ -47,7 +47,7 @@
     "jsdom": "^23.0.1",
     "openapi-typescript-codegen": "^0.29.0",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8",
-    "vitest": "^4.0.13"
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9"
   }
 }
