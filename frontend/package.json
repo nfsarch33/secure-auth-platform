@@ -26,7 +26,7 @@
     "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.49.2",
     "react-router-dom": "^6.30.4",
-    "typescript-eslint": "^8.18.0",
+    "typescript-eslint": "^8.62.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.9",
     "cypress": "^15.15.0",
-    "eslint": "^9.17.0",
+    "eslint": "^10.6.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "jsdom": "^23.0.1",
