@@ -3,7 +3,7 @@
 A production-ready, full-stack authentication system built with **Go (Golang)**, **React (TypeScript)**, **PostgreSQL**, and **Docker/Kubernetes**.
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Go Version](https://img.shields.io/badge/go-1.23-blue.svg)
+![Go Version](https://img.shields.io/badge/go-1.25-blue.svg)
 ![React Version](https://img.shields.io/badge/react-18-blue.svg)
 
 ## 🚀 Features
