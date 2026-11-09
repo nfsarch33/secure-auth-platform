@@ -60,7 +60,7 @@ func (v *GoogleVerifier) Verify(ctx context.Context, token string) (bool, error)
 	if err != nil {
 		return false, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	var result siteVerifyResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {

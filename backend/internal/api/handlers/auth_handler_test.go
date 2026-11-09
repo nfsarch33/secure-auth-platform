@@ -23,6 +23,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+// testPassword is the password the handler tests sign up with.
+const testPassword = "Password123!"
+
 func TestHandlers(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Handlers Suite")
@@ -57,7 +60,7 @@ var _ = Describe("AuthHandler", func() {
 		It("should return 201 Created on successful signup", func() {
 			reqBody := api.SignUpRequest{
 				Email:    openapi_types.Email("test@example.com"),
-				Password: "Password123!",
+				Password: testPassword,
 			}
 			jsonBody, _ := json.Marshal(reqBody)
 			req, _ := http.NewRequest(http.MethodPost, "/auth/signup", bytes.NewBuffer(jsonBody))
@@ -83,7 +86,7 @@ var _ = Describe("AuthHandler", func() {
 			token := "invalid-token"
 			reqBody := api.SignUpRequest{
 				Email:        openapi_types.Email("test@example.com"),
-				Password:     "Password123!",
+				Password:     testPassword,
 				CaptchaToken: &token,
 			}
 			jsonBody, _ := json.Marshal(reqBody)
@@ -106,7 +109,7 @@ var _ = Describe("AuthHandler", func() {
 		It("should return 409 Conflict if user already exists", func() {
 			reqBody := api.SignUpRequest{
 				Email:    openapi_types.Email("existing@example.com"),
-				Password: "Password123!",
+				Password: testPassword,
 			}
 			jsonBody, _ := json.Marshal(reqBody)
 			req, _ := http.NewRequest(http.MethodPost, "/auth/signup", bytes.NewBuffer(jsonBody))
@@ -126,7 +129,7 @@ var _ = Describe("AuthHandler", func() {
 		It("should return 200 OK with token on successful signin", func() {
 			reqBody := api.SignInRequest{
 				Email:    openapi_types.Email("test@example.com"),
-				Password: "Password123!",
+				Password: testPassword,
 			}
 			jsonBody, _ := json.Marshal(reqBody)
 			req, _ := http.NewRequest(http.MethodPost, "/auth/signin", bytes.NewBuffer(jsonBody))

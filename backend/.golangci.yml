@@ -1,3 +1,5 @@
+version: "2"
+
 run:
   concurrency: 4
   timeout: 5m
@@ -5,43 +7,40 @@ run:
 
 linters:
   enable:
+    - bodyclose
+    - dogsled
+    - dupl
     - errcheck
-    - gosimple
+    - gocritic
+    - goconst
+    - goprintffuncname
+    - gocyclo
     - govet
     - ineffassign
-    - staticcheck
-    - typecheck
-    - unused
-    - bodyclose
-    - dupl
-    - goconst
-    - gocyclo
-    - gofmt
-    - goimports
     - misspell
-    - unconvert
-    - unparam
-    - dogsled
     - nakedret
-    - gocritic
-    - goprintffuncname
     - prealloc
     - rowserrcheck
-    - stylecheck
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
     - whitespace
+  settings:
+    gocyclo:
+      min-complexity: 15
+    dupl:
+      threshold: 100
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+    misspell:
+      locale: US
+    govet:
+      enable:
+        - shadow
 
-linters-settings:
-  gocyclo:
-    min-complexity: 15
-  dupl:
-    threshold: 100
-  goconst:
-    min-len: 3
-    min-occurrences: 3
-  misspell:
-    locale: US
-  govet:
-    enable:
-      - shadow
-
-
+formatters:
+  enable:
+    - gofmt
+    - goimports
