@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- **Validation**: Zod 3 -> Zod 4 in the frontend. The sign-in and sign-up schemas
+  replace `z.string().email()` with `z.email()`; the schema tests are unchanged and
+  still assert the same messages.
+- **Dependencies**: the Zod 4 breaking changes that affect this project:
+  - `ZodError.errors` was removed; the issue list is `ZodError.issues`.
+  - String format failures are reported with the code `invalid_format` instead of
+    `invalid_string`.
+  - `@hookform/resolvers` 3.x reads `ZodError.errors` and therefore cannot
+    validate a Zod 4 schema; it moves to 7.x, which supports Zod 3 and Zod 4.
+- **Dependencies**: ESLint 10 requires `eslint-plugin-react-hooks` 7.x, because
+  5.x declares a peer range that stops at ESLint 9 and `npm ci` failed with
+  ERESOLVE. `@eslint/js` moves to 10.x so the recommended rule set matches the
+  ESLint major in use.
+- **Dependencies**: routine updates - `react-router-dom` 6.30.6, `axios` 1.21.0,
+  `vite` 8.3.6, `vitest` and `@vitest/coverage-v8` 4.1.12, `react-hook-form`
+  7.66.1, `@humanfs/node` 0.16.8, `js-yaml` 4.3.2, `handlebars` 4.7.10,
+  `source-map-js` 1.2.2, `follow-redirects` 1.16.3.
+- **Dependencies**: backend `kin-openapi` 0.149.0 and `jsonschema/v6` 6.0.3.
+
 ## [1.1.0] - 2025-11-23
 
 ### Added

@@ -12,6 +12,9 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// internalServerError is the message returned for an unexpected server failure.
+const internalServerError = "Internal server error"
+
 type AuthHandler struct {
 	service  service.AuthService
 	verifier recaptcha.Verifier
@@ -48,7 +51,7 @@ func (h *AuthHandler) SignUp(c *gin.Context) {
 			c.JSON(http.StatusConflict, api.ErrorResponse{Error: err.Error()})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: "Internal server error"})
+		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: internalServerError})
 		return
 	}
 
@@ -84,7 +87,7 @@ func (h *AuthHandler) SignIn(c *gin.Context) {
 			c.JSON(http.StatusUnauthorized, api.ErrorResponse{Error: "Invalid credentials"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: "Internal server error"})
+		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: internalServerError})
 		return
 	}
 
@@ -113,7 +116,7 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 
 	user, err := h.service.GetProfile(c.Request.Context(), userID.(uuid.UUID))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: "Internal server error"})
+		c.JSON(http.StatusInternalServerError, api.ErrorResponse{Error: internalServerError})
 		return
 	}
 

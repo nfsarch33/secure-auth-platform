@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const signInSchema = z.object({
-  email: z.string().email('Email is required'),
+  email: z.email('Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
